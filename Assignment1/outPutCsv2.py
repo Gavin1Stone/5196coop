@@ -35,6 +35,7 @@ for i in para:
     kind.append(tmpKind[0])
 
 
+
     #retrieve number of claims
 
     tmpNumOfClaim=re.findall('(?:<number-of-claims>)(.*?)(?:</number-of-claims>)',i,re.S)
@@ -66,8 +67,12 @@ for i in para:
     for l in range(len(tmpClaimText1)):
         tmpClaimText1[l]=re.sub('<claim-text>',' ',tmpClaimText1[l])
         tmpClaimText1[l] = re.sub('<.*?claim-ref.*?>', ' ', tmpClaimText1[l])
+        tmpClaimText1[l] = re.sub('<.*?>', ' ', tmpClaimText1[l])
         tmpClaimText1[l] = re.sub('\n', '', tmpClaimText1[l])
         tmpClaimText1[l] = re.sub('  ', ' ', tmpClaimText1[l])
+        tmpClaimText1[l] = re.sub(' ; , (?:\w)', '. ', tmpClaimText1[l])
+
+
     ClaimStr=''
     for m in tmpClaimText1:
         ClaimStr+=m
@@ -77,8 +82,11 @@ for i in para:
     tmpAbstract=re.findall("(?:<abstract.*?>\n<p .*?>)(.*?)(?:</abstract>)",i,re.S)
     for n in range(len(tmpAbstract)):
         tmpAbstract[n]=re.sub("</p>",'',tmpAbstract[n])
+        tmpAbstract[n] = re.sub("<.*?claim-ref.*?>", ' ', tmpAbstract[n])
+        tmpAbstract[n] = re.sub("<.*?>", ' ', tmpAbstract[n])
         tmpAbstract[n] = re.sub("\n", '', tmpAbstract[n])
         tmpAbstract[n] = re.sub("  ", ' ', tmpAbstract[n])
+        tmpAbstract[n] = re.sub(" ; , (?:\w)", ' ', tmpAbstract[n])
     AbsStr=''
     for n in tmpAbstract:
         AbsStr+=n
@@ -98,7 +106,7 @@ print(len(abstract))
 inFile.close()
 
 column=['grant_id','patent_title','kind','number_of_claims'
-,'inventors','citations_applicant_count','citations_examnier_count','claim_text','abstract']
+,'inventors','citations_applicant_count','citations_examiner_count','claims_text','abstract']
 
 df=pd.DataFrame([grant_id,patent_title,kind,number_of_claims,inventors
                 ,citations_applicant_count,citations_examnier_count,
@@ -107,3 +115,5 @@ df=df.T
 outFile.close()
 df.columns=column
 df.to_csv(path_or_buf="./CodeTestResult.txt",index=False,na_rep="NA")
+
+
