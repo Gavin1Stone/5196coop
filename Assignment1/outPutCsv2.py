@@ -4,6 +4,7 @@
 # @Studid : 29489636
 
 import re
+import pandas as pd
 
 grant_id=[]
 patent_title=[]
@@ -16,6 +17,7 @@ claim_text=[]
 abstract=[]
 
 inFile=open("sample_input.txt","r")
+outFile=open("CodeTestResult.txt","w+")
 para=re.findall("(?:<us-patent-grant.*?)(?:file=\")(.*?)(?:</us-patent-grant)",inFile.read(),re.S)
 for i in para:
     #retrive patentid
@@ -81,7 +83,7 @@ for i in para:
     for n in tmpAbstract:
         AbsStr+=n
     abstract.append(AbsStr)
-
+'''
 print(len(grant_id))
 print(len(patent_title))
 print(len(kind))
@@ -91,7 +93,17 @@ print(len(citations_applicant_count))
 print(len(citations_examnier_count))
 print(len(claim_text))
 print(len(abstract))
-
+'''
 
 inFile.close()
-print()
+
+column=['grant_id','patent_title','kind','number_of_claims'
+,'inventors','citations_applicant_count','citations_examnier_count','claim_text','abstract']
+
+df=pd.DataFrame([grant_id,patent_title,kind,number_of_claims,inventors
+                ,citations_applicant_count,citations_examnier_count,
+                claim_text,abstract])
+df=df.T
+outFile.close()
+df.columns=column
+df.to_csv(path_or_buf="./CodeTestResult.txt",index=False,na_rep="NA")
